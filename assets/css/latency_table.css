@@ -1,0 +1,44 @@
+.container {
+    max-width: 960px;
+  }
+  
+  .lh-condensed { line-height: 1.25; }
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  } 
+  
+  .company-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    max-width: 55%;
+  }
+
+
+.tableFixHead thead th { 
+  position: sticky;
+   top: 0; 
+   z-index: 2;
+  }
+.tableFixHead tbody th { 
+  position: sticky;
+  left: -1rem;
+  z-index: 1;
+  }
+.tableFixHead thead th:first-of-type { 
+  position: sticky;
+}
+th     {
+   background:#eee; 
+  }
