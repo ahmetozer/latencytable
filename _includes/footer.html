@@ -1,12 +1,25 @@
         <footer class="my-5 pt-5 text-muted text-center text-small">
-            <p class="mb-1">&copy; 2020-{{ 'now' | date: "%Y" }} Company Name</p>
+            <p class="mb-1">&copy; 2020-{{ 'now' | date: "%Y" }} ahmetozer.org</p>
             <ul class="list-inline">
-                <li class="list-inline-item"><a href="#">Privacy</a></li>
-                <li class="list-inline-item"><a href="#">Terms</a></li>
-                <li class="list-inline-item"><a href="#">Support</a></li>
+                <li class="list-inline-item"><a href="https://github.com/ahmetozer/latencytable">Source</a></li>
+                {% for fl  in site.footerLinks limit: 7 %}
+                <li class="list-inline-item">
+                  <a href="{{ fl .link }}">{{ fl .name }}</a>
+                </li>
+                {% endfor %}
             </ul>
         </footer>
       </div>
-  
+      {% if site.debug == "yes" %}
+        <script src='{% if site.url  and site.url != nil and site.url != "" %}{{site.url}}{% endif %}/assets/js/latencytable.js?{{ page.date | date: "s" }}'></script>
+      {% else %}
+        <script src='{{ site.url}}/assets/js/latencytable.js'></script>
+      {% endif %}
+      <!-- To enable bootstrap tooltip -->
+      <script>
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+      </script>
   </body>
 </html>
