@@ -1,12 +1,49 @@
 {%- include head.html -%}
 {%- include header.html -%}
 
+<div class="container" style="z-index: 5;">
+  <div class="row">
+    <div class="col">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="IPType">IP version</label>
+        </div>
+        <select class="custom-select" id="IPType" >
+          <!-- <option value="IPvDefault">Default</option> -->
+          <option value="IPv4" selected>IPv4</option>
+          <option value="IPv6">IPv6</option>
+        </select>
+      </div>
+    </div>
+    <div class="col">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="showType">Show</label>
+        </div>
+        <select class="custom-select" id="showType">
+          <option value="rttmin" selected>Minimum Latency</option>
+          <option value="rttavg">Average Latency</option>
+          <option value="rttmax">Max Latency</option>
+          <option value="mdev">Mdev</option>
+          <option value="packetloss">Packet Loss</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <style id="showDataTypeStyle">
+  .rttavg, .rttmax, .mdev, .packetloss{display:none;}  
+  </style>
+</div>
+
+
 <div class="col-md-12 order-md-1 table-responsive tableFixHead">
   <table class="table table-hover">
     <thead>
       <tr class="thead-dark" id="lathorizontal">
         <th scope="col" class="text-center">From/To</th>
-
       </tr>
     </thead>
     <tbody id="latveritical">
