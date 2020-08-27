@@ -7,20 +7,20 @@ function tableBuilder(tableData) {
 
     // Vertical location Names
     
-    for (x in tableData) {
+    for (y in tableData) {
         let vtable
-        for (y in tableData) {
+        for (x in tableData) {
             if ( x == y ) {         // If it self
-                vtable = vtable + '<td id="ltid-'+x+'-'+y+'" class="text-center">' + "-"
+                vtable = vtable + '<td id="ltid-x'+x+'-y'+y+'" class="text-center">' + "-"
             } else if ( x > y ) {   // After it self block
-                vtable = vtable + '<td id="ltid-'+x+'-'+y+'" class="text-center" style="color: #17c0eb;">' + 'loading'
+                vtable = vtable + '<td id="ltid-x'+x+'-y'+y+'" class="text-center" style="color: #17c0eb;">' + 'loading'
             } else {                // Before it self block
-                vtable = vtable + '<td id="ltid-'+x+'-'+y+'" class="text-center" style="color: #17c0eb;">' + 'loading'
+                vtable = vtable + '<td id="ltid-x'+x+'-y'+y+'" class="text-center" style="color: #17c0eb;">' + 'loading'
             }
             vtable = vtable + '</td>'
         }
         // Append the line
-        $("#latveritical").append('<tr><th scope="row" class="text-center">'+ tableData[x]["name"] +'</th>'+vtable).children('tr:last')
+        $("#latveritical").append('<tr><th scope="row" class="text-center">'+ tableData[y]["name"] +'</th>'+vtable).children('tr:last')
     }
 }
 
@@ -49,8 +49,11 @@ function loadServerList(listURL) {
 
 var icmpAlKeyValue = ["rttmin","rttavg","rttmax","mdev","packetloss"]
 
-var IPType = "IPvDefault"
+var IPType = "IPv4"
 function rowWriteData(rowid,data) {
+    //$('#'+'ltid-'+rowid[0]+'-'+rowid[1]).html(rowid[0]+'-'+rowid[1]).css("color", "#218c74")
+    //return
+
     if ( data.code == "OK" ) {
         let htmlData =""
         $.each(data, function(k, v) {
@@ -58,12 +61,12 @@ function rowWriteData(rowid,data) {
                 htmlData += '<span class="'+k+'">'+v+'</span>';
             }
           });
-        $('#'+'ltid-'+rowid[0]+'-'+rowid[1]).html(htmlData).css("color", "#218c74")
+        $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html(htmlData).css("color", "#218c74")
     } else if ( data.code == "RemoteHostDown" ) {
-        $('#'+'ltid-'+rowid[0]+'-'+rowid[1]).html("Down").css("color", "#ff9f1a")
+        $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html("Down").css("color", "#ff9f1a")
     } else {
-        $('#'+'ltid-'+rowid[0]+'-'+rowid[1]).html("ERR r-"+rowid[0]+"-"+rowid[1]).css("color", "#ff3838")
-        console.log("ERR r-"+rowid[0]+"-"+rowid[1],data)
+        $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html("ERR r-x"+rowid[0]+"-y"+rowid[1]).css("color", "#ff3838")
+        console.log("ERR r-x"+rowid[0]+"-y"+rowid[1],data)
     }
     
 }
@@ -101,12 +104,16 @@ function extractHostname(url) {
     return hostname;
 }
 
-//var IPMode="IPv6"
 
-function rowWebRequest(rowid,IPMode) {
-    // X rowid[0], Y rowid[1]
+function rowWebRequest(rowid) {
+    const IPMode = $('#IPType').children("option:selected").val()
+    // X-Axis rowid[0], Y-Axis rowid[1]
+    // Y axis is current server.
+    // Y axis make a test to X axis server. // rowid[1] make a test to rowid[0]
     let tableData = ltJson.servers
-    let testAddr
+
+    // Now looking test addr.
+    let testAddr = tableData[rowid[0]].ipv6
 
 
     // Test ADDR selection System
@@ -118,48 +125,49 @@ function rowWebRequest(rowid,IPMode) {
     //      if has it  return IPv4 addr if IPv4 add is not available return test url hostname
     // }
 
-    if (tableData[rowid[1]].ds !== undefined && tableData[rowid[1]].ds !== '') { // Firstly look if has a DualStack connection, use this addr for IPv4 and IPv6
-        
+    if (tableData[rowid[0]].ds !== undefined && tableData[rowid[0]].ds !== '') { // Firstly look if has a DualStack connection, use this addr for IPv4 and IPv6
+
         testAddr = tableData.ds
 
     } else { // If dualstack addr is not found, look individual
         
         if ( IPMode == "IPv4" ) { // Check mode is IPv4
 
-            if (tableData[rowid[1]].ipv4 !== undefined && tableData[rowid[1]].ipv4 !== '') {
-                testAddr = tableData[rowid[1]].ipv4
+            if (tableData[rowid[0]].ipv4 !== undefined && tableData[rowid[0]].ipv4 !== '') {
+                testAddr = tableData[rowid[0]].ipv4
             } else { 
-                testAddr = extractHostname(tableData[rowid[1]].ntsurl)
+                testAddr = extractHostname(tableData[rowid[0]].ntsurl)
             }
 
         } else if ( IPMode == "IPv6" ) { // For IPv6
 
-            if (tableData[rowid[1]].ipv6 !== undefined && tableData[rowid[1]].ipv6 !== '') {
-                testAddr = tableData[rowid[1]].ipv6
+            if (tableData[rowid[0]].ipv6 !== undefined && tableData[rowid[0]].ipv6 !== '') {
+                testAddr = tableData[rowid[0]].ipv6
             } else {
-                testAddr = extractHostname(tableData[rowid[1]].ntsurl)
+                testAddr = extractHostname(tableData[rowid[0]].ntsurl)
             }
 
         } else {    // For Default
 
-            if (tableData[rowid[1]].ipv6 !== undefined && tableData[rowid[1]].ipv6 !== '') {
-                testAddr = tableData[rowid[1]].ipv6
-            } else if (tableData[rowid[1]].ipv4 !== undefined && tableData[rowid[1]].ipv4 !== '') {
-                testAddr = tableData[rowid[1]].ipv4
+            if (tableData[rowid[0]].ipv6 !== undefined && tableData[rowid[0]].ipv6 !== '') {
+                testAddr = tableData[rowid[0]].ipv6
+            } else if (tableData[rowid[0]].ipv4 !== undefined && tableData[rowid[0]].ipv4 !== '') {
+                testAddr = tableData[rowid[0]].ipv4
             } else {
-                testAddr = extractHostname(tableData[rowid[1]].ntsurl)
+                testAddr = extractHostname(tableData[rowid[0]].ntsurl)
             }
 
         }
     }
     // END of the Test ADDR selection System
 
-        
+
     $.ajax({
-        url: tableData[rowid[0]].ntsurl+'?funcType=icmp&IPVersion='+IPMode+'&host='+testAddr,
+        url: tableData[rowid[1]].ntsurl+'?funcType=icmp&IPVersion='+IPMode+'&host='+testAddr,
         dataType: 'json',
         success: function (data) {
             rowWriteData(rowid,data,IPMode)
+            //rowWriteData([rowid[0],rowid[1]],{'code': "OK", 'rttmin': tableData[rowid[1]].ntsurl+"=>"+testAddr})
         },
         error: function (data) {
             rowWriteData(rowid,data)
@@ -167,29 +175,45 @@ function rowWebRequest(rowid,IPMode) {
       });
 }
 
-function tableLoadService(tableData) {
-    for (let index = 0; index < 1; index++) {    // This infinity loop
-      
-        //for (x in tableData) {  // this for horizontal lines
-        for (let x = 0; x < 2; x++){
 
-            for (y in tableData) {  //this for destinations
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function xAxis(y) { // Horizontal X-Axis Same server loop
+    for (let x in ltJson.servers) {  //this for destinations
                 
-                if ( x != y ) {     // Do not process to self 
-                    rowWebRequest([x,y],IPType)
-                }
-                
-                // Sleep between two row // This is important because request sent over to same server and low duration might be trigger rate limit.
-                // sleep 400
-            }
+        if ( x != y ) {     // Do not process to self
+            
+            setTimeout(() => { rowWebRequest([x,y],IPType); }, 2000*x);
+        }
+        // Sleep between two row // This is important because request sent over to same server and low duration might be trigger rate limit.
+        // sleep 400
+    }
+    return y;
+}
+
+
+// async function VerticalLoop() {
+
+// }
+
+async function tableLoadService() {
+    //for (;;) {    // This infinity loop
+        for (let y in ltJson.servers) {  // this for Vertical lines
+
+            xAxis(y) // Start request to all servers
         
-            // Sleep for between lines
-            // sleep 200
+            // Sleep for between lines 200 ms
+            await timeout(200);
         }
 
         // Sleep for re run time
         // sleep 10000 ten second
-    }
+        await timeout(ltJson.servers.length*2000);
+        console.log("First Loop Done                  "+ltJson.servers.length*2000+"             -            -")
+    //}
 }
 
 loadServerList(JsonlistURL)
