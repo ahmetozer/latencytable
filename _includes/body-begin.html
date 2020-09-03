@@ -1,13 +1,13 @@
 <body class="bg-light">
   <div class="container">
-<div class="py-5 text-center">
-  <a href="{{ site.company.url }}" class="company-logo align-self-center">
-    {% if site.company.logo  and site.company.logo != nil and site.company.logo != "" %}
-    <img class="company-logo" alt="{{ site.company.name }}" src="{{ site.company.logo }}" {% if site.company.logoinvert == true %} style="filter: invert(1);"{% endif %}></img>
-    {% endif %}
-  </a>
-  <h2>{{ site.title }}</h2>
-  <p class="lead">{{ site.description }}</p>
-</div>
-<script> var JsonlistURL = '{% if page.listurl  and page.listurl != nil and page.listurl != "" %}{{page.listurl}}{% else %}/servers.json{% endif %}'</script>
-
+    <div class="py-5 text-center">
+      <a href="{{ site.company.url }}" class="company-logo align-self-center">
+        {% if site.company.logo  and site.company.logo != nil and site.company.logo != "" %}
+          <img class="company-logo" alt="{{ site.company.name }}" src="{{ site.company.logo }}" {% if site.company.logoinvert == true %} style="filter: invert(1);"{% endif %}></img>
+        {% endif %}
+      </a>
+      <h2>{{ site.title }}</h2>
+      <p class="lead">{{ site.description }}</p>
+    </div>
+    <script> var JsonlistURL = '{% if page.listurl  and page.listurl != nil and page.listurl != "" %}{{page.listurl}}{% else %}/servers.json{% endif %}'</script>
+  </div>

@@ -4,9 +4,7 @@ function tableBuilder(tableData) {
     for (y in tableData) {
         $("#lathorizontal").append('<th scope="col" class="text-center tbBdr">' + tableData[y]["name"] + '</th>');
     }
-
     // Vertical location Names
-    
     for (y in tableData) {
         let vtable
         for (x in tableData) {
@@ -67,7 +65,7 @@ function rowWriteData(rowid,data,IPdata) {
     } else if ( data.code == "BadRequest" && data.err == "funcTypeMissMatchExecuted" ) {
         $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html("No "+IPdata).css("color", "#ff9f1a")
     } else {
-        $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html("ERR r-x"+rowid[0]+"-y"+rowid[1]).css("color", "#ff3838")
+        $('#'+'ltid-x'+rowid[0]+'-y'+rowid[1]).html("r-x"+rowid[0]+"-y"+rowid[1]).css("color", "#ff3838")
         console.log("ERR r-x"+rowid[0]+"-y"+rowid[1],data)
     }
     
@@ -89,8 +87,8 @@ $('#showType').on('change', function() {
 
 $('#IPType').on('change', function() {
     IPType = this.value
-    $( ".tbBdr" ).remove();
-    tableBuilder(ltJson.servers)
+    $( ".tbBdr" ).remove(); //remove all created tables
+    tableBuilder(ltJson.servers) // Create all tables again
   });
 
 function extractHostname(url) {
@@ -108,7 +106,6 @@ function extractHostname(url) {
     return hostname;
 }
 
-
 function rowWebRequest(rowid) {
     const IPMode = $('#IPType').children("option:selected").val()
     // X-Axis rowid[0], Y-Axis rowid[1]
@@ -118,8 +115,6 @@ function rowWebRequest(rowid) {
 
     // Now looking test addr.
     let testAddr //= tableData[rowid[0]].ipv6
-
-
     // Test ADDR selection System
     // If server has a dualstack addr, return dualstack addr
     //  else {
@@ -165,7 +160,7 @@ function rowWebRequest(rowid) {
 
     if (testAddr != undefined ) {
         $.ajax({
-            url: tableData[rowid[1]].ntsurl+'?funcType=icmp&IPVersion='+IPMode+'&host='+testAddr,
+            url: tableData[rowid[1]].ntsurl+'?funcType=icmp&IPVersion='+IPMode+'&host='+encodeURIComponent(testAddr),
             dataType: 'json',
             success: function (data) {
                 rowWriteData(rowid,data,IPMode)
@@ -181,17 +176,13 @@ function rowWebRequest(rowid) {
     
 }
 
-
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
 async function xAxis(y) { // Horizontal X-Axis Same server loop
     for (let x in ltJson.servers) {  //this for destinations
-                
-        if ( x != y ) {     // Do not process to self
-            
+        if ( x != y ) {     // Do not process to it self
             setTimeout(() => { rowWebRequest([x,y],IPType); }, 2000*x);
         }
         // Sleep between two row // This is important because request sent over to same server and low duration might be trigger rate limit.
@@ -200,26 +191,19 @@ async function xAxis(y) { // Horizontal X-Axis Same server loop
     return y;
 }
 
-
-// async function VerticalLoop() {
-
-// }
-
 async function tableLoadService() {
     for (;;) {    // This infinity loop
         for (let y in ltJson.servers) {  // this for Vertical lines
-
             xAxis(y) // Start request to all servers
-        
             // Sleep for between lines 200 ms
             await timeout(200);
         }
-
         // Sleep for re run time
-        // sleep 10000 ten second
-        await timeout(ltJson.servers.length*2000);
-        console.log("First Loop Done                  "+ltJson.servers.length*2000+"             -            -")
+        //                  Sleep For X-Lines             Sleep for Y-Lines
+        await timeout( (ltJson.servers.length*2000) + (ltJson.servers.length*200));
     }
 }
+
+
 
 loadServerList(JsonlistURL)
