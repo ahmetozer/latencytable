@@ -1,0 +1,59 @@
+######
+#   Latency Service
+#
+#   github.com/ahmetozer/latencytable
+#   ahmetozer.org
+#
+#   This is your site configuration file
+######
+
+#   Site Main Title
+title: Acme Corp Latency Table
+
+#   Description of your web site
+# it`s also seen before selecting server.
+description: >- 
+  Welcome to Acme Data Center Latency Table. You can watch the Latency between our data centers in realtime.
+
+
+# This is your website url. Please a give right url. Assets are use this URL.
+# Do not add "/" end of the url. It is automatically added.
+#url: "https://latencytable.ahmetozer.org" 
+
+# Give information about Your company
+company:
+  url:                  https://example.com
+  name:                 Acme Corp
+  logo:                 # /acme.jpg
+  logoinvert:           false
+  favicon:              /favicon.png
+
+# Footer Links
+# At max 7 Item
+footerLinks:
+  - one:
+    name: "Link1"
+    link:  "#Link1"
+  - two:
+    name: "Link2"
+    link:  "#Link2"
+  - three:
+    name: "Link3"
+    link:  "#Link3"
+  - four:
+    name: "Link4"
+    link:  "#Link4"
+
+
+# Some Optional Configurations
+# jekyll bind addr
+host:                 0.0.0.0
+
+# Build settings, Please do not change
+markdown:               kramdown
+kramdown:
+  entity_output: numeric
+plugins:
+  - jekyll-sitemap
+  - jekyll-paginate
+permalink:               pretty
