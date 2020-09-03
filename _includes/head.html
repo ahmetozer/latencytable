@@ -17,9 +17,9 @@
   <meta name="application-name" content="{{ site.title }}">
   <meta name="theme-color" content="#18dcff">
   <meta name="generator" content="jeklly">
-  <link rel="icon" type="image/svg+xml" href='{% if site.url  and site.url != nil and site.url != "" %}{{site.url}}{% endif %}/assets/images/looking-glass-icon.svg'>
-  <link rel="shortcut icon" href='{% if site.url  and site.url != nil and site.url != "" %}{{site.url}}{% endif %}/assets/images/favicon.png'>
-  <link rel="apple-touch-icon" href='{% if site.url  and site.url != nil and site.url != "" %}{{site.url}}{% endif %}/assets/images/favicon.png'>
+  <link rel="icon" type="image/svg+xml" href='{{ site.company.favicon }}'>
+  <link rel="shortcut icon" href='{{ site.company.favicon }}'>
+  <link rel="apple-touch-icon" href='{{ site.company.favicon }}'>
   <title>{{site.title}}{% if page.title  and page.title != nil and page.title != "" %} | {{page.title}}{% endif %}</title>
 
   <!-- jquery -->
