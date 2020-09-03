@@ -82,9 +82,9 @@ Example configuration
 
 ### Region Pages
 
-1. Create md file under region page.
+1. Create new md file under root directory.
 
-2. Create and set server list under region folder.  
+2. Create and set server list.  
 Ex. eu.json
 
 ```json
@@ -97,17 +97,56 @@ Ex. eu.json
 }
 ```
 
-3. Configure page settings.
+3.  Configure page settings.
 
 ```markdown
 ---
 title: EU
 descr: Data centers in Europe
 layout: default
-listurl: /region/eu.json
+listurl: /eu.json
 permalink: /eu/
 tags: ["region"]
 ---
+```
+
+### Methods for Deploying Web Page
+
+#### Github
+
+You can just fork this repo on github and configure your github pages
+
+#### Self hosting
+
+Run ahmetozer/latencytable container on your server.
+
+```bash
+# Expose ports with signed certificate
+docker run -it --name latencytable --restart always \
+-e webserver=yes -p 80:80 -p 443:443 \
+--mount type=bind,source="signed_certificate.crt",target=/etc/ssl/certs/project.crt,readonly \
+--mount type=bind,source="signed_certificate.key",target=/etc/ssl/private/project.key,readonly \
+ahmetozer/latencytable
+
+# Expose ports with self signed certificate
+docker run -it --name latencytable --restart always \
+-e webserver=yes -p 80:80 -p 443:443 \
+ahmetozer/latencytable
+```
+
+Overwrite configuration files or add region pages
+
+```bash
+docker cp _config.yml latencytable:/srv/jekyll/_config.yml
+docker cp logo.png latencytable:/srv/jekyll/logo.png
+docker cp servers.json latencytable:/srv/jekyll/servers.json
+
+### If you have a regions, copy region files
+docker cp eu.md latencytable:/srv/jekyll/eu.md
+docker cp eu.json latencytable:/srv/jekyll/eu.json
+
+### To re building, restart your Container
+docker restart latencytable
 ```
 
 ### Net Tools Service Configuration
@@ -118,12 +157,12 @@ You can see more details for installation and configuration on [net tools servic
 
 Latency table requires icmp function on net tools service.  
 By default net tools rate limit is one request in one second. To prevent getting rate limit error on latency table increase rate limit to 10.  
-For preventing cors with setting referrers to your latency table host.
+For preventing cors, set referrers to your latency table host.
 
 ```bash
 #   Example Conf
 docker run -it -e rate="10" -e functions="icmp" ahmetozer/net-tools-service
 
 ## Prevent cors request from other websites. Change `latencytable.ahmetozer.org` to your latency table host
-docker run -it -e rate="10" -e functions="icmp" -e referrers="latencytable.ahmetozer.org" ahmetozer/net-tools-service
+docker run -it -e rate="10" -e functions="icmp" -e referrers="latencytable.ahmetozer.org" -p 443:443 ahmetozer/net-tools-service
 ```
